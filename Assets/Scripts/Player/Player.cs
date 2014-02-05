@@ -458,6 +458,7 @@ public class Player : MonoBehaviour {
 	public void Win()
 	{
 		inputEnabled = false;
+		SetGodMode(true);
 		if(networkView.isMine)
 		{
 			GameManager.SetInfoTextMeshText("YOU WIN!\nPRESS R TO REMATCH");
@@ -470,6 +471,7 @@ public class Player : MonoBehaviour {
 	public void Lose()
 	{
 		inputEnabled = false;
+		SetGodMode(true);
 		StartCoroutine(WaitForRematchCoroutine());
 	}
 
