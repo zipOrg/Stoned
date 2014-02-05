@@ -108,7 +108,7 @@ public class Player : MonoBehaviour {
 			yield return new WaitForSeconds(0.2f);
 		}
 		StartCoroutine(WaitForForPlayerReady());
-	}
+	} 
 
 	private IEnumerator WaitForForPlayerReady()
 	{
@@ -132,6 +132,7 @@ public class Player : MonoBehaviour {
 			{
 				networkView.RPC ("SetVisible",RPCMode.AllBuffered,true);
 				inputEnabled = true;
+				moveInstantly = false;
 				if(Network.isClient && networkView.isMine && !firstStone)
 				{
 					firstStone = GameManager.instance.CreateFirstStone();
@@ -474,11 +475,14 @@ public class Player : MonoBehaviour {
 
 	private IEnumerator WaitForRematchCoroutine()
 	{
+
 		while(true)
 		{
 			if(Input.GetKeyDown(KeyCode.R))
 			{
+
 				GameManager.ResetGame();
+
 			}
 			yield return null;
 		}
