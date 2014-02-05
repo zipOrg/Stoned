@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject stonePrefab;
 	public Transform playerOneSpawnPoint;
 	public Transform playerTwoSpawnPoint;
+	public int scoreToWin;
 
 	public TextMesh yourScore;
 	public TextMesh enemyScore;
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour {
 	private bool serverPlayerReady;
 	private bool clientPlayerReady;
 
+	private bool rematchPending;
 
 
 	private void Awake()
@@ -76,7 +78,6 @@ public class GameManager : MonoBehaviour {
 	private void OnConnectedToServer()
 	{
 		CreatePlayer(2);
-		CreateFirstStone();
 	}
 	
 	private void OnServerInitialized()
@@ -91,9 +92,9 @@ public class GameManager : MonoBehaviour {
 		return stone.GetComponent<Stone>();
 	}
 
-	public void CreateFirstStone()
+	public Stone CreateFirstStone()
 	{
-		CreateStone(new Vector3(0.0f,1.4f,0.0f),Quaternion.identity);
+		return CreateStone(new Vector3(0.0f,1.4f,0.0f),Quaternion.identity);
 	}
 
 	private IEnumerator ShakeCameraCoroutine(float intensity, float duration)
@@ -167,6 +168,42 @@ public class GameManager : MonoBehaviour {
 		return instance.serverPlayerReady && instance.clientPlayerReady;
 	}
 
+	[RPC]
+	public void ResetGameRPC()
+	{
+		if(!rematchPending)
+		{
+			rematchPending = true;
+			GameObject[] stones = GameObject.FindGameObjectsWithTag("Stone");
+			foreach(GameObject stone in stones)
+			{
+				Destroy(stone);
+			}
+			instance.serverPlayerReady = false;
+			instance.clientPlayerReady = false;
+			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+			foreach(GameObject player in players)
+			{
+				Player playerScript = player.GetComponent<Player>();
+				playerScript.Respawn(false);
+				playerScript.Init();
+			}
+			SetEnemyScoreText("0");
+			SetYourScoreText("0");
+			rematchPending = false;
+		}
+	}
+
+
+	public static void ResetGame()
+	{
+		instance.networkView.RPC ("ResetGameRPC",RPCMode.AllBuffered);
+	}
+
+	public static int GetScoreToWin()
+	{
+		return instance.scoreToWin;
+	}
 
 
 

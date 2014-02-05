@@ -228,7 +228,7 @@ public class Stone : MonoBehaviour {
 				if(fatal && !collidingPlayer.GetGodMode())
 				{
 					Vector3 playerPosition = collidingPlayer.transform.position;
-					collidingPlayer.networkView.RPC("Respawn",RPCMode.AllBuffered);
+					collidingPlayer.networkView.RPC("Respawn",RPCMode.AllBuffered,true);
 					stoneNetworkView.RPC("RemovePlayerReference",RPCMode.AllBuffered);
 					Stone newStone = GameManager.instance.CreateStone(playerPosition,Quaternion.identity);
 					Color colorToSet = collidingPlayer.bodyRenderer.material.color;

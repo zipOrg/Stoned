@@ -37,7 +37,8 @@ public class Player : MonoBehaviour {
 	private bool godMode;
 	private int score;
 	private bool winner;
-	public bool inputEnabled;
+	private bool inputEnabled;
+	private Stone firstStone;
 	//sync
 	private float serializationTime;
 	private float lastSerializationTime;
@@ -78,13 +79,19 @@ public class Player : MonoBehaviour {
 		playerRigidbody.isKinematic = true;
 		firstSerialization = true;
 		godMode = true;
-		score = 0;
 		inputEnabled = false;
 		SetVisible(false);
 	}
 
 	private void Start()
 	{
+		Init ();
+	}
+
+	public void Init()
+	{
+		StopAllCoroutines();
+		score = 0;
 		if(networkView.isMine)
 		{
 			playerRigidbody.isKinematic = false;
@@ -125,7 +132,11 @@ public class Player : MonoBehaviour {
 			{
 				networkView.RPC ("SetVisible",RPCMode.AllBuffered,true);
 				inputEnabled = true;
-
+				if(Network.isClient && networkView.isMine && !firstStone)
+				{
+					firstStone = GameManager.instance.CreateFirstStone();
+					Debug.LogError("Create first stone");
+				}
 			}
 			yield return null;
 		}
@@ -391,13 +402,16 @@ public class Player : MonoBehaviour {
 	}
 
 
+
+
+
 	[RPC]
-	public void Respawn()
+	public void Respawn(bool score)
 	{
-		StartCoroutine(RespawnCoroutine());
+		StartCoroutine(RespawnCoroutine(score));
 	}
 
-	private IEnumerator RespawnCoroutine()
+	private IEnumerator RespawnCoroutine(bool score)
 	{
 		SetVisible(false);
 		SetGodMode(true);
@@ -416,8 +430,10 @@ public class Player : MonoBehaviour {
 			playerRigidbody.isKinematic = false;
 		}
 		SetVisible(true);
-		GetOtherPlayer().Score();
-
+		if(score)
+		{
+			GetOtherPlayer().Score();
+		}
 	}
 
 
@@ -430,7 +446,7 @@ public class Player : MonoBehaviour {
 			GameManager.SetEnemyScoreText(score.ToString());
 		}
 
-		if(score >= 15)
+		if(score >= GameManager.GetScoreToWin())
 		{
 			Win();
 		}
@@ -443,17 +459,29 @@ public class Player : MonoBehaviour {
 		inputEnabled = false;
 		if(networkView.isMine)
 		{
-			GameManager.SetInfoTextMeshText("YOU WIN!");
-			GameManager.SetEnemyInfoTextMeshText("YOU LOSE!");
+			GameManager.SetInfoTextMeshText("YOU WIN!\nPRESS R TO REMATCH");
+			GameManager.SetEnemyInfoTextMeshText("YOU LOSE!\nPRESS R TO REMATCH");
 		}
-
+		StartCoroutine(WaitForRematchCoroutine());
 		GetOtherPlayer().Lose();
 	}
 
 	public void Lose()
 	{
 		inputEnabled = false;
+		StartCoroutine(WaitForRematchCoroutine());
+	}
 
+	private IEnumerator WaitForRematchCoroutine()
+	{
+		while(true)
+		{
+			if(Input.GetKeyDown(KeyCode.R))
+			{
+				GameManager.ResetGame();
+			}
+			yield return null;
+		}
 	}
 	
 	public Player GetOtherPlayer()
