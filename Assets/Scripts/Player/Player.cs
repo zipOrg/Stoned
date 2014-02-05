@@ -430,7 +430,7 @@ public class Player : MonoBehaviour {
 			GameManager.SetEnemyScoreText(score.ToString());
 		}
 
-		if(score >= 1)
+		if(score >= 15)
 		{
 			Win();
 		}
