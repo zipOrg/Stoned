@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour {
 
-	public GameObject menuParent;
+	public GameObject poseCamera;
 	private NetworkManager networkManager;
 
 
@@ -30,7 +30,8 @@ public class MainMenu : MonoBehaviour {
 
 	public void HideMenu()
 	{
-		Destroy(menuParent);
+		Destroy(poseCamera);
+		Destroy(gameObject);
 	}
 
 }

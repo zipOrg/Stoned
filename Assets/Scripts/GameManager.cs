@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour {
 	public TextMesh enemyScore;
 	public TextMesh infoTextMesh;
 
+	public PauseMenu pauseMenu;
+
 	private Vector3 cameraStartPosition;
 
 	private bool serverPlayerReady;
@@ -215,6 +217,23 @@ public class GameManager : MonoBehaviour {
 	private void OnDisconnectedFromServer(NetworkDisconnection disconnection)
 	{
 		Application.LoadLevel("Main");
+	}
+
+	public static void ShowPauseMenu()
+	{
+		Debug.LogError("Show pause menu");
+		instance.pauseMenu.gameObject.SetActive(true);	
+	}
+
+	public static void HidePauseMenu()
+	{
+		Debug.LogError("Hide pause menu");
+		instance.pauseMenu.gameObject.SetActive(false);	
+	}
+
+	public static bool IsPauseMenuActive()
+	{
+		return instance.pauseMenu.gameObject.activeInHierarchy;
 	}
 
 }

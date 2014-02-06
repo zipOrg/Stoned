@@ -161,7 +161,7 @@ public class Player : MonoBehaviour {
 	{
         if(networkView.isMine)
 		{
-			if(inputEnabled)
+			if(inputEnabled && !GameManager.IsPauseMenuActive())
 			{
 				CalculateMouseWorldPosition();
 				RotateBodyTowardsCursor();
@@ -179,6 +179,20 @@ public class Player : MonoBehaviour {
 					}
 				}
 			}
+
+			if(Input.GetKeyDown(KeyCode.Escape))
+			{
+				Debug.LogError("Pauza");
+				if(GameManager.IsPauseMenuActive())
+				{
+					GameManager.HidePauseMenu();
+				}
+				else
+				{
+					GameManager.ShowPauseMenu();
+				}
+			}
+
 		}
 		else
 		{
