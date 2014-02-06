@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour {
 			player = Network.Instantiate(playerPrefab,playerOneSpawnPoint.position,playerOneSpawnPoint.rotation,0) as GameObject;
 			playerScript = player.GetComponent<Player>();
 			playerScript.networkView.RPC ("SetSpawnPositionAndRotation",RPCMode.AllBuffered,playerOneSpawnPoint.position,playerOneSpawnPoint.eulerAngles);
-
+			mainCamera.transform.eulerAngles = new Vector3(90.0f,0.0f,0.0f);
 			break;
 
 		case 2:
@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour {
 			player = Network.Instantiate(playerPrefab,playerOneSpawnPoint.position,playerOneSpawnPoint.rotation,0) as GameObject;
 			playerScript = player.GetComponent<Player>();
 			playerScript.networkView.RPC ("SetSpawnPositionAndRotation",RPCMode.AllBuffered,playerOneSpawnPoint.position,playerOneSpawnPoint.eulerAngles);
+			mainCamera.transform.eulerAngles = new Vector3(90.0f,0.0f,0.0f);
 			break;
 		}
 
@@ -205,9 +206,15 @@ public class GameManager : MonoBehaviour {
 		return instance.scoreToWin;
 	}
 
+	private void OnPlayerDisconnected(NetworkPlayer player)
+	{
+		MasterServer.UnregisterHost();
+		Application.LoadLevel("Main");
+	}
 
-
-	
-
+	private void OnDisconnectedFromServer(NetworkDisconnection disconnection)
+	{
+		Application.LoadLevel("Main");
+	}
 
 }
