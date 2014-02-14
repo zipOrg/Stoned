@@ -3,27 +3,24 @@ using System.Collections;
 
 public class MenuPoseController : MonoBehaviour {
 
-	public float rotationSpeed;
+	public float animationSpeed;
+	public float timeToReachAnimationSpeed;
 
-	private void Start()
+	private void Awake()
 	{
-		StartCoroutine(MovePoseCoroutine());
+		animation["rotate"].speed = 0.0f;
+		StartCoroutine(StartAnimation());
 	}
 
 
 
-	private IEnumerator MovePoseCoroutine()
+	private IEnumerator StartAnimation()
 	{
-
-		yield return new WaitForSeconds(1.0f);
-		float currentRotationSpeed = 0.0f;
-		while(true)
+		float currentTime = 0.0f;
+		while(currentTime < timeToReachAnimationSpeed)
 		{
-			if(currentRotationSpeed < rotationSpeed)
-			{
-				currentRotationSpeed += Time.smoothDeltaTime/2.0f;
-			}
-			transform.eulerAngles += Vector3.up * Time.smoothDeltaTime * currentRotationSpeed;
+			animation["rotate"].speed = Mathf.Lerp(0.0f,animationSpeed,Mathf.SmoothStep(0.0f,1.0f,currentTime/timeToReachAnimationSpeed));
+			currentTime += Time.deltaTime;
 			yield return new WaitForEndOfFrame();
 		}
 	}

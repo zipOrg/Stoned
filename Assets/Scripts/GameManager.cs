@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour {
 			playerScript = player.GetComponent<Player>();
 			playerScript.SetDIrectionMultiplier(-1.0f);
 			playerScript.networkView.RPC ("SetSpawnPositionAndRotation",RPCMode.AllBuffered,playerTwoSpawnPoint.position,playerTwoSpawnPoint.eulerAngles);
-			playerScript.networkView.RPC("SetColor",RPCMode.AllBuffered,1.0f,0.0f,0.0f,1.0f);
+			playerScript.networkView.RPC("SetColor",RPCMode.AllBuffered,81.0f/255.0f,59.0f/255.0f,149.0f/255.0f,1.0f);
 			mainCamera.transform.eulerAngles = new Vector3(90.0f,180.0f,0.0f);
 			break;
 

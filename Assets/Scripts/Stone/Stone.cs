@@ -48,6 +48,7 @@ public class Stone : MonoBehaviour {
 		firstSerialization = true;
 		stoneRigidbody.isKinematic = true;
 		fatal = false;
+		fatalParticle.startColor = renderer.material.color;
 	}
 
 
